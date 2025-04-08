@@ -1,10 +1,12 @@
 import './App.css'
-import Wordle from "./components/Wordle";
+import Wordle from "./components/Wordle.jsx";
 
 function App() {
   return (
-    <div className='App'> <Wordle/> </div>
-  )
+    <div className='App'>
+      <Wordle/>
+    </div>
+  );
 }
 
 export default App

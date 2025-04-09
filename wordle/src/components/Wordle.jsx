@@ -19,6 +19,7 @@ export default function Wordle() {
   const [solutionFound, setSolutionFound] = useState(false);
   const [activeLetterIndex, setActiveLetterIndex] = useState(0);
   const [notification, setNotification] = useState("");
+  const [activeRowIndex, setActiveRowIndex] = useState(0);
 
   const wordleRef = useRef();
 
@@ -30,9 +31,24 @@ export default function Wordle() {
     if (activeLetterIndex < 5) {
       setNotification("");
 
-      let newGuesses = 
+      let newGuesses = [...guesses];
+      newGuesses[activeRowIndex] = replaceCharacter(
+        newGuesses[activeRowIndex],
+        activeLetterIndex,
+        letter
+      );
+      setGuesses(newGuesses);
+      setActiveLetterIndex((index) => index + 1);
     }
   };
+
+  const replaceCharacter = (string, index, replacement) => {
+    return (
+      string.slice(0, index) +
+      replacement +
+      string.slice(index + replacement.length)
+    );
+  }
 
   const hitEnter = () => {
     //TODO

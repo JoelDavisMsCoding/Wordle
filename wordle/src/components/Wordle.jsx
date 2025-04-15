@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import "../styles/Wordle.css";
-import Row from "./Row.jsx";
-import {LETTERS, potentialWords} from "../data/lettersAndWords.js"
-//import Keyboard from "./Keyboard.jsx";
+import "../styles/Wordle.scss";
+import Row from "./Row";
+import Keyboard from "./Keyboard";
+import {LETTERS, potentialWords} from "../data/lettersAndWords";
 
-const SOLUTION = "table";
+const SOLUTION = potentialWords[Math.floor(Math.random() * potentialWords.length)];
+
+console.log(SOLUTION);
 
 export default function Wordle() {
   const [guesses, setGuesses] = useState([
@@ -20,6 +22,11 @@ export default function Wordle() {
   const [activeLetterIndex, setActiveLetterIndex] = useState(0);
   const [notification, setNotification] = useState("");
   const [activeRowIndex, setActiveRowIndex] = useState(0);
+  const [failedGuesses, setFailedGuesses] = useState([]);
+  const [correctLetters, setCorrectLetters] = useState([]);
+  const [presentLetters, setPresentLetters] = useState([]);
+  const [absentLetters, setAbsentLetters] = useState([]);
+
 
   const wordleRef = useRef();
 
@@ -51,8 +58,70 @@ export default function Wordle() {
   }
 
   const hitEnter = () => {
-    //TODO
-  }
+    if (activeLetterIndex === 5) {
+      const currentGuess = guesses[activeRowIndex];
+
+      if (!potentialWords.includes(currentGuess)) {
+        setNotification("NOT IN THE WORD LIST");
+      }
+      else if (failedGuesses.includes(currentGuess)) {
+        setNotification("TRIED TO USE THIS WORD ALREADY");
+      }
+      else if (currentGuess === SOLUTION) {
+        setSolutionFound(true);
+        setNotification("WELL DONE");
+        setCorrectLetters([...SOLUTION]);
+      }
+      else {
+        let correctLetters = [];
+
+        [...currentGuess].forEach((letter, index) => {
+          if (SOLUTION[index] === letter) correctLetters.push(letter);
+        });
+
+        setCorrectLetters([...new Set(correctLetters)]); //A Set revomes all duplicates out of an array.
+
+        setPresentLetters([
+          ...new Set([
+            ...presentLetters,
+            ...[...currentGuess].filter((letter) => SOLUTION.includes(letter)),
+          ]),
+        ]);
+
+        setAbsentLetters([
+          ...new Set([
+            ...absentLetters,
+            ...[...currentGuess].filter((letter) => !SOLUTION.includes(letter)),
+          ]),
+        ]);
+
+        setFailedGuesses([...failedGuesses, currentGuess]);
+        setActiveRowIndex((index) => index + 1);
+        setActiveLetterIndex(0);
+      }
+    }
+    else {
+      setNotification("FIVE LETTER WORDS ONLY")
+    }
+  };
+
+  const hitBackspace = () => {
+    setNotification("");
+
+    if (guesses[activeRowIndex][0] !== " ") {
+      const newGuesses = [...guesses];
+
+      newGuesses[activeRowIndex] = replaceCharacter(
+        newGuesses[activeRowIndex],
+        activeLetterIndex -1,
+        " "
+      );
+
+      setGuesses(newGuesses);
+        setActiveLetterIndex(index => index - 1);
+
+    }
+  };
 
   const handleKeyDown = (event) => {
     if (solutionFound) return;
@@ -82,10 +151,34 @@ export default function Wordle() {
       onKeyDown={handleKeyDown}
     >
       <h1 className="title">Wordle Clone</h1>
-      <div className="notification"></div>
+      <div className={`notification ${solutionFound && "notification--green"}`}>
+        {notification}
+      </div>
       {guesses.map((guess, index) => {
-        return (<Row key={index} word={guess} />);
+        return (
+          <Row
+            key={index}
+            word={guess}
+            applyRotation={
+              activeRowIndex > index ||
+              (solutionFound && activeRowIndex === index)}
+            solution={SOLUTION}
+            bounceOnError={
+              notification !== "WELL DONE" &&
+              notification !== "" &&
+              activeRowIndex === index}
+          />
+        );
+
       })}
+      <Keyboard
+        presentLetters={presentLetters}
+        correctLetters={correctLetters}
+        absentLetters={absentLetters}
+        typeLetter={typeLetter}
+        hitEnter={hitEnter}
+        hitBackspace={hitBackspace}
+      />
     </div>
-  )
+  );
 }

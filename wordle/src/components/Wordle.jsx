@@ -150,7 +150,7 @@ export default function Wordle() {
       }}
       onKeyDown={handleKeyDown}
     >
-      <h1 className="title">Wordle Clone</h1>
+      <h1 className="title">Wordle Remake</h1>
       <div className={`notification ${solutionFound && "notification--green"}`}>
         {notification}
       </div>
@@ -179,6 +179,12 @@ export default function Wordle() {
         hitEnter={hitEnter}
         hitBackspace={hitBackspace}
       />
+      <br />
+      <p>
+        Green - The letter is in the right position.<br/>
+        Gold - The letter is in the word but not in the right position.<br/>
+        Gray - Means the letter is not in the word chosen.
+      </p>
     </div>
   );
 }

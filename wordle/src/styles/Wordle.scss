@@ -11,6 +11,10 @@
 
 .title {
     text-transform: capitalize;
+    color: chocolate;
+    box-shadow: 0px 0px 25px chocolate;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .notification {
@@ -20,8 +24,13 @@
     color: salmon;
     font-weight: 600;
     font-size: 1.25rem;
-  
+
     &--green {
-      color: #538d4e;
+        color: #538d4e;
     }
-  }
+}
+
+p{
+    color: chocolate;
+    text-align: center;
+}

@@ -180,11 +180,11 @@ export default function Wordle() {
         hitBackspace={hitBackspace}
       />
       <br />
-      <p>
-        Green - The letter is in the right position.<br/>
-        Gold - The letter is in the word but not in the right position.<br/>
-        Gray - Means the letter is not in the word chosen.
-      </p>
+      <ul>
+        <ol className="green">Green - The letter is in the right position.</ol> <br />
+        <ol className="gold">Gold - The letter is in the word but not in the right position.</ol> <br />
+        <ol className="gray">Gray - Means the letter is not in the word chosen.</ol>
+      </ul>
     </div>
   );
 }
